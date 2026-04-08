@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  VISITOR
+}
+
+enum ExpressionOfInterest {
+  YES
+  NO
+  MAYBE
+}
+
+enum VisitorStatus {
+  NEW
+  PENDING
+  OVERDUE
+  INTERESTED
+  MAYBE_LATER
+  JOINED
+  REJECTED
+  CATEGORY_CLASH
+  CLOSED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(VISITOR)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedVisitors Visitor[]   @relation("AssignedTo")
+  createdFollowUps FollowUp[]  @relation("CreatedBy")
+  visitorProfile   Visitor?    @relation("VisitorAccount")
+
+  @@index([role])
+}
+
+model Visitor {
+  id               Int                  @id @default(autoincrement())
+  name             String
+  dateOfVisit      DateTime
+  category         String
+  mobileNo         String
+  emailAddress     String?
+  eoi              ExpressionOfInterest
+  invitedBy        String?
+  categoryClash    Boolean              @default(false)
+  status           VisitorStatus        @default(NEW)
+
+  assignedToId     Int?
+  assignedTo       User?                @relation("AssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  userId           Int?                 @unique
+  user             User?                @relation("VisitorAccount", fields: [userId], references: [id], onDelete: SetNull)
+
+  followUps        FollowUp[]
+
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([status])
+  @@index([assignedToId])
+  @@index([dateOfVisit])
+  @@index([mobileNo])
+  @@index([emailAddress])
+}
+
+model FollowUp {
+  id                Int        @id @default(autoincrement())
+  visitorId         Int
+  visitor           Visitor    @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  byId              Int?
+  by                User?      @relation("CreatedBy", fields: [byId], references: [id], onDelete: SetNull)
+
+  date              DateTime
+  feedback          String
+  nextFollowUpDate  DateTime?
+  status            VisitorStatus
+
+  createdAt         DateTime   @default(now())
+
+  @@index([visitorId])
+  @@index([byId])
+  @@index([status])
+  @@index([nextFollowUpDate])
+}
