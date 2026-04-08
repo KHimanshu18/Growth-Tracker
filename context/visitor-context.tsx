@@ -138,7 +138,9 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
     [visitors, currentVisitor, loading, error],
   );
 
-  getVisitorById: (id: string) => Promise<VisitorRecord | null>;
+  return (
+    <VisitorContext.Provider value={value}>{children}</VisitorContext.Provider>
+  );
 }
 
 export function useVisitorContext() {
