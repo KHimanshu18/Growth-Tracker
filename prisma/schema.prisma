@@ -31,7 +31,7 @@ enum VisitorStatus {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String     @id @default(uuid())
   name         String
   email        String   @unique
   passwordHash String
@@ -48,7 +48,7 @@ model User {
 }
 
 model Visitor {
-  id               Int                  @id @default(autoincrement())
+  id               String     @id @default(uuid())
   name             String
   dateOfVisit      DateTime
   category         String
@@ -59,10 +59,10 @@ model Visitor {
   categoryClash    Boolean              @default(false)
   status           VisitorStatus        @default(NEW)
 
-  assignedToId     Int?
+  assignedToId     String?
   assignedTo       User?                @relation("AssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
 
-  userId           Int?                 @unique
+  userId           String?              @unique
   user             User?                @relation("VisitorAccount", fields: [userId], references: [id], onDelete: SetNull)
 
   followUps        FollowUp[]
@@ -78,11 +78,11 @@ model Visitor {
 }
 
 model FollowUp {
-  id                Int        @id @default(autoincrement())
-  visitorId         Int
+  id                String     @id @default(uuid())
+  visitorId         String
   visitor           Visitor    @relation(fields: [visitorId], references: [id], onDelete: Cascade)
 
-  byId              Int?
+  byId              String?
   by                User?      @relation("CreatedBy", fields: [byId], references: [id], onDelete: SetNull)
 
   date              DateTime

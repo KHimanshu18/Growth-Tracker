@@ -13,21 +13,21 @@ export type VisitorStatus =
   | "CLOSED";
 
 export type AuthUser = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: UserRole;
 };
 
 export type TeamMember = {
-  id: number;
+  id: string;
   name: string;
   email: string;
 };
 
 export type FollowUpSummary = {
-  id: number;
-  visitorId: number;
+  id: string;
+  visitorId: string;
   date: Date;
   feedback: string;
   nextFollowUpDate: Date | null;
@@ -37,7 +37,7 @@ export type FollowUpSummary = {
 };
 
 export type VisitorListItem = {
-  id: number;
+  id: string;
   name: string;
   dateOfVisit: Date;
   category: string;
@@ -47,7 +47,7 @@ export type VisitorListItem = {
   invitedBy: string | null;
   categoryClash: boolean;
   status: VisitorStatus;
-  assignedToId: number | null;
+  assignedToId: string | null;
   createdAt: Date;
   updatedAt: Date;
   assignedTo: TeamMember | null;
@@ -57,7 +57,7 @@ export type VisitorListItem = {
 };
 
 export type VisitorRecord = {
-  id: number;
+  id: string;
   name: string;
   dateOfVisit: Date;
   category: string;
@@ -67,8 +67,8 @@ export type VisitorRecord = {
   invitedBy: string | null;
   categoryClash: boolean;
   status: VisitorStatus;
-  assignedToId: number | null;
-  userId: number | null;
+  assignedToId: string | null;
+  userId: string | null;
   createdAt: Date;
   updatedAt: Date;
   assignedTo: TeamMember | null;
@@ -85,6 +85,6 @@ export type CreateVisitorInput = {
   eoi: ExpressionOfInterest;
   invitedBy?: string;
   categoryClash: boolean;
-  assignedToId?: number | null;
+  assignedToId?: string | null;
   status: VisitorStatus;
 };

@@ -30,7 +30,7 @@ export async function authenticateUser(email: string, password: string) {
   if (!isValid) return null;
 
   return {
-    id: user.id,
+    id: user.id, // ✅ UUID string
     name: user.name,
     email: user.email,
     role: user.role as AuthUser["role"],
@@ -44,7 +44,7 @@ export async function signAuthToken(user: AuthUser) {
     role: user.role,
   })
     .setProtectedHeader({ alg: "HS256" })
-    .setSubject(String(user.id))
+    .setSubject(user.id) // ✅ already string (UUID)
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(secret);
@@ -53,10 +53,12 @@ export async function signAuthToken(user: AuthUser) {
 export async function verifyAuthToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, secret);
-    const id = Number(payload.sub);
+
+    const id = payload.sub; // ✅ string (UUID)
 
     if (
       !id ||
+      typeof id !== "string" ||
       typeof payload.name !== "string" ||
       typeof payload.email !== "string" ||
       (payload.role !== "ADMIN" && payload.role !== "VISITOR")
@@ -65,7 +67,7 @@ export async function verifyAuthToken(token: string) {
     }
 
     return {
-      id,
+      id, // ✅ string
       name: payload.name,
       email: payload.email,
       role: payload.role,
