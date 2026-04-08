@@ -76,15 +76,18 @@ export async function verifyAuthToken(token: string) {
 }
 
 export async function getCurrentUser() {
-  const token = cookies().get(AUTH_COOKIE_NAME)?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+
   if (!token) return null;
   return verifyAuthToken(token);
 }
 
 export async function setAuthCookie(user: AuthUser) {
   const token = await signAuthToken(user);
+  const cookieStore = await cookies();
 
-  cookies().set(AUTH_COOKIE_NAME, token, {
+  cookieStore.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

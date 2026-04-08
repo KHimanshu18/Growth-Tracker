@@ -1,5 +1,5 @@
-import { Sidebar } from "./components/sidebar";
 import { MainArea } from "./components/main-area";
+import { Sidebar } from "./components/sidebar";
 
 export default function DashboardLayout({
   children,

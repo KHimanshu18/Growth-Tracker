@@ -155,7 +155,7 @@ export function AddVisitorForm() {
                 <SelectValue placeholder="Select team member" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">None</SelectItem>
+                <SelectItem value="none">None</SelectItem>
                 {teamMembers.map((member) => (
                   <SelectItem key={member.id} value={String(member.id)}>
                     {member.name} ({member.email})

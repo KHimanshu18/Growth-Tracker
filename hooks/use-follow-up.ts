@@ -1,7 +1,6 @@
+// hooks/use-follow-up.ts
 "use client";
 
-import { useVisitorContext } from "@/context/visitor-context";
+import { useFollowUpContext } from "@/context/follow-up-context";
 
-export function useVisitor() {
-  return useVisitorContext();
-}
+export const useFollowUp = () => useFollowUpContext();

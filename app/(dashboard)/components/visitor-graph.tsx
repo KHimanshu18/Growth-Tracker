@@ -18,8 +18,8 @@ export function VisitorGraph({ data }: { data: DashboardPoint[] }) {
       <CardHeader>
         <CardTitle>Visitor added trend</CardTitle>
       </CardHeader>
-      <CardContent className="h-[360px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <CardContent className="h-90">
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" tickMargin={10} />

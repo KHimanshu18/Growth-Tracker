@@ -5,7 +5,7 @@ const publicPaths = ["/login"];
 const adminOnlyPaths = ["/add-visitor", "/visitors", "/follow-ups"];
 const visitorAllowedPaths = ["/overview", "/personal-details"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
 

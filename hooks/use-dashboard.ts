@@ -1,6 +1,6 @@
+// hooks/use-dashboard.ts
 "use client";
+
 import { useDashboardContext } from "@/context/dashboard-context";
 
-export function useDashboard() {
-  return useDashboardContext();
-}
+export const useDashboard = () => useDashboardContext();

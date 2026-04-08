@@ -1,7 +1,6 @@
+// hooks/use-visitor.ts
 "use client";
 
-import { useDashboardContext } from "@/context/dashboard-context";
+import { useVisitorContext } from "@/context/visitor-context";
 
-export function useDashboard() {
-  return useDashboardContext();
-}
+export const useVisitor = () => useVisitorContext();

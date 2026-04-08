@@ -19,6 +19,7 @@ export async function loginAction(
   const email = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
+
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
@@ -33,7 +34,9 @@ export async function loginAction(
 
   const token = await signAuthToken(user);
 
-  cookies().set(AUTH_COOKIE_NAME, token, {
+  const cookieStore = await cookies();
+
+  cookieStore.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -42,5 +45,4 @@ export async function loginAction(
   });
 
   redirect("/overview");
-  return initialState;
 }
