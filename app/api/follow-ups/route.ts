@@ -10,20 +10,12 @@ export async function GET(request: NextRequest) {
   }
 
   const visitorIdParam = request.nextUrl.searchParams.get("visitorId");
-  const visitorId = visitorIdParam ? Number(visitorIdParam) : null;
-
-  if (visitorIdParam && (!Number.isFinite(visitorId) || !visitorId)) {
-    return NextResponse.json(
-      { message: "Invalid visitor id." },
-      { status: 400 },
-    );
-  }
+  const visitorId =
+    visitorIdParam && visitorIdParam !== "none" ? visitorIdParam : null;
 
   const followUps = await prisma.followUp.findMany({
     where: visitorId ? { visitorId } : undefined,
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
     select: {
       id: true,
       visitorId: true,
@@ -54,29 +46,37 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = (await request.json()) as {
-      visitorId?: number;
+      visitorId?: string;
       date?: string;
       feedback?: string;
       nextFollowUpDate?: string | null;
       status?: string;
     };
 
-    if (!body.visitorId || !body.date || !body.feedback || !body.status) {
+    const visitorId =
+      body.visitorId && body.visitorId !== "none" ? body.visitorId : null;
+
+    // ✅ Strict validation (fixes undefined issues)
+    if (!visitorId || !body.date || !body.feedback || !body.status) {
       return NextResponse.json(
         { message: "Missing required fields." },
         { status: 400 },
       );
     }
 
+    // ✅ Now TypeScript knows these are defined
+    const date = new Date(body.date);
+    const nextFollowUpDate =
+      body.nextFollowUpDate ? new Date(body.nextFollowUpDate) : null;
+
     const created = await prisma.$transaction(async (tx) => {
       const followUp = await tx.followUp.create({
         data: {
-          visitorId: body.visitorId!,
+          visitorId,
           byId: user.id,
-          date: new Date(body.date!),
+          date,
           feedback: body.feedback!,
-          nextFollowUpDate:
-            body.nextFollowUpDate ? new Date(body.nextFollowUpDate) : null,
+          nextFollowUpDate,
           status: body.status as
             | "NEW"
             | "PENDING"
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       });
 
       await tx.visitor.update({
-        where: { id: body.visitorId! },
+        where: { id: visitorId },
         data: {
           status: body.status as
             | "NEW"
@@ -125,7 +125,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ followUp: created }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       { message: "Unable to create follow up." },
       { status: 500 },
