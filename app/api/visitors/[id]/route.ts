@@ -4,15 +4,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id: idParam } = await context.params;
   const user = await getUserFromRequest(request);
 
   if (!user || user.role !== "ADMIN") {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const id = Number(params.id);
+  const id = Number(idParam);
 
   if (!Number.isFinite(id) || id <= 0) {
     return NextResponse.json(
