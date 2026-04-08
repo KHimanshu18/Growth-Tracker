@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/use-auth";
 import { getSidebarItems } from "@/lib/rbac";
+import { LogoutButton } from "@/components/logout-button";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -43,6 +44,10 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      <div className="mt-4">
+        <LogoutButton />
+      </div>
 
       <Separator className="my-4" />
 
