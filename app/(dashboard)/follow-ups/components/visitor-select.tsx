@@ -17,9 +17,7 @@ export function VisitorSelect() {
   return (
     <Select
       value={selectedVisitorId ? String(selectedVisitorId) : ""}
-      onValueChange={(value) =>
-        setSelectedVisitorId(value ? Number(value) : null)
-      }
+      onValueChange={(value) => setSelectedVisitorId(value || null)}
     >
       <SelectTrigger>
         <SelectValue placeholder="Select visitor" />

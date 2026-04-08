@@ -75,7 +75,7 @@ export function FollowUpForm() {
               value={visitorId}
               onValueChange={(value) => {
                 setVisitorId(value);
-                setSelectedVisitorId(value ? Number(value) : null);
+                setSelectedVisitorId(value || null);
               }}
             >
               <SelectTrigger>
