@@ -11,30 +11,47 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = (await request.json()) as {
-      visitorId?: number;
+      visitorId?: string;
       date?: string;
       feedback?: string;
       nextFollowUpDate?: string | null;
       status?: string;
     };
 
-    if (!body.visitorId || !body.date || !body.feedback || !body.status) {
+    // ✅ normalize + narrow types
+    const visitorId =
+      typeof body.visitorId === "string" && body.visitorId !== "none" ?
+        body.visitorId
+      : null;
+
+    const dateStr = typeof body.date === "string" ? body.date : null;
+
+    const feedback = typeof body.feedback === "string" ? body.feedback : null;
+
+    const status = typeof body.status === "string" ? body.status : null;
+
+    if (!visitorId || !dateStr || !feedback || !status) {
       return NextResponse.json(
         { message: "Missing required fields." },
         { status: 400 },
       );
     }
 
+    const date = new Date(dateStr);
+    const nextFollowUpDate =
+      body.nextFollowUpDate && typeof body.nextFollowUpDate === "string" ?
+        new Date(body.nextFollowUpDate)
+      : null;
+
     const created = await prisma.$transaction(async (tx) => {
       const followUp = await tx.followUp.create({
         data: {
-          visitorId: body.visitorId!,
+          visitorId, // ✅ now strictly string
           byId: user.id,
-          date: new Date(body.date!),
-          feedback: body.feedback!,
-          nextFollowUpDate:
-            body.nextFollowUpDate ? new Date(body.nextFollowUpDate) : null,
-          status: body.status as
+          date,
+          feedback, // ✅ now strictly string
+          nextFollowUpDate,
+          status: status as
             | "NEW"
             | "PENDING"
             | "INTERESTED"
@@ -63,9 +80,9 @@ export async function POST(request: NextRequest) {
       });
 
       await tx.visitor.update({
-        where: { id: body.visitorId! },
+        where: { id: visitorId },
         data: {
-          status: body.status as
+          status: status as
             | "NEW"
             | "PENDING"
             | "INTERESTED"
@@ -74,7 +91,7 @@ export async function POST(request: NextRequest) {
             | "REJECTED"
             | "CATEGORY_CLASH"
             | "CLOSED",
-          categoryClash: body.status === "CATEGORY_CLASH",
+          categoryClash: status === "CATEGORY_CLASH",
         },
       });
 
@@ -82,7 +99,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ followUp: created }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       { message: "Unable to create follow up." },
       { status: 500 },
