@@ -6,9 +6,9 @@ export default async function VisitorDetailsByIdPage({
 }: {
   params: { id: string };
 }) {
-  const id = Number(params.id);
+  const id = params.id; // ✅ UUID string
 
-  if (!Number.isFinite(id) || id <= 0) {
+  if (!id || typeof id !== "string") {
     notFound();
   }
 

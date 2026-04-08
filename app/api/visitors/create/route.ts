@@ -19,10 +19,11 @@ export async function POST(request: NextRequest) {
       eoi?: string;
       invitedBy?: string | null;
       categoryClash?: boolean;
-      assignedToId?: number | null;
+      assignedToId?: string | null; // ✅ UUID
       status?: string;
     };
 
+    // ✅ validate required fields
     if (
       !body.name ||
       !body.dateOfVisit ||
@@ -37,6 +38,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ✅ normalize assignedToId
+    const assignedToId =
+      body.assignedToId && body.assignedToId !== "none" ?
+        body.assignedToId
+      : null;
+
     const visitor = await prisma.visitor.create({
       data: {
         name: body.name,
@@ -47,7 +54,7 @@ export async function POST(request: NextRequest) {
         eoi: body.eoi as "YES" | "NO" | "MAYBE",
         invitedBy: body.invitedBy ?? null,
         categoryClash: Boolean(body.categoryClash),
-        assignedToId: body.assignedToId ?? null,
+        assignedToId, // ✅ string | null
         status: body.status as
           | "NEW"
           | "PENDING"
@@ -61,7 +68,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ visitor }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       { message: "Unable to create visitor." },
       { status: 500 },

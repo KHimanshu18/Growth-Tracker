@@ -23,7 +23,7 @@ const eoiLabel: Record<string, string> = {
   MAYBE: "Maybe",
 };
 
-export function VisitorDetails({ visitorId }: { visitorId?: number }) {
+export function VisitorDetails({ visitorId }: { visitorId?: string }) {
   const { currentVisitor, getVisitorById } = useVisitor();
   const [visitor, setVisitor] = useState<VisitorRecord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,7 +68,7 @@ export function VisitorDetails({ visitorId }: { visitorId?: number }) {
           <CardTitle>{visitor.name}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
-          <Detail label="Visitor ID" value={String(visitor.id)} />
+          <Detail label="Visitor ID" value={visitor.id} />
           <Detail
             label="Date of Visit"
             value={new Date(visitor.dateOfVisit).toLocaleDateString()}
