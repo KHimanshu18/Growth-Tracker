@@ -10,12 +10,12 @@ import React, {
 import type { FollowUpRecord } from "@/types";
 
 type FollowUpContextValue = {
-  selectedVisitorId: number | null;
-  setSelectedVisitorId: React.Dispatch<React.SetStateAction<number | null>>;
+  selectedVisitorId: string | null; // ✅ UUID
+  setSelectedVisitorId: React.Dispatch<React.SetStateAction<string | null>>;
   followUps: FollowUpRecord[];
   loading: boolean;
   error: string | null;
-  refreshFollowUps: (visitorId?: number | null) => Promise<void>;
+  refreshFollowUps: (visitorId?: string | null) => Promise<void>;
 };
 
 const FollowUpContext = createContext<FollowUpContextValue | undefined>(
@@ -23,14 +23,14 @@ const FollowUpContext = createContext<FollowUpContextValue | undefined>(
 );
 
 export function FollowUpProvider({ children }: { children: React.ReactNode }) {
-  const [selectedVisitorId, setSelectedVisitorId] = useState<number | null>(
+  const [selectedVisitorId, setSelectedVisitorId] = useState<string | null>(
     null,
-  );
+  ); // ✅ string
   const [followUps, setFollowUps] = useState<FollowUpRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshFollowUps = async (visitorId?: number | null) => {
+  const refreshFollowUps = async (visitorId?: string | null) => {
     const id = visitorId ?? selectedVisitorId;
 
     if (!id) {

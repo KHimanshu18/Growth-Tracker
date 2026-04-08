@@ -17,7 +17,7 @@ type VisitorContextValue = {
   error: string | null;
   refreshVisitors: () => Promise<void>;
   refreshCurrentVisitor: () => Promise<void>;
-  getVisitorById: (id: number) => Promise<VisitorRecord | null>;
+  getVisitorById: (id: string) => Promise<VisitorRecord | null>;
 };
 
 const VisitorContext = createContext<VisitorContextValue | undefined>(
@@ -93,7 +93,7 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getVisitorById = async (id: number) => {
+  const getVisitorById = async (id: string) => {
     try {
       const response = await fetch(`/api/visitors/${id}`, {
         method: "GET",
@@ -138,9 +138,7 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
     [visitors, currentVisitor, loading, error],
   );
 
-  return (
-    <VisitorContext.Provider value={value}>{children}</VisitorContext.Provider>
-  );
+  getVisitorById: (id: string) => Promise<VisitorRecord | null>;
 }
 
 export function useVisitorContext() {
