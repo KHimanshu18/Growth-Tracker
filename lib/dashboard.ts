@@ -33,7 +33,6 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     joined,
     rejected,
     categoryClashStatusCount,
-    categoryClashBooleanCount,
     recentVisitors,
   ] = await Promise.all([
     prisma.visitor.count(),
@@ -74,11 +73,6 @@ export async function getDashboardStats(): Promise<DashboardStats> {
         status: status.CATEGORY_CLASH,
       },
     }),
-    prisma.visitor.count({
-      where: {
-        categoryClash: true,
-      },
-    }),
     prisma.visitor.findMany({
       where: {
         createdAt: {
@@ -115,7 +109,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     interestedCount,
     joined,
     rejected,
-    categoryClash: categoryClashStatusCount + categoryClashBooleanCount,
+    categoryClash: categoryClashStatusCount,
     graphData: Array.from(graphMap.entries()).map(([date, count]) => ({
       date,
       count,
