@@ -37,7 +37,11 @@ export async function addFollowUpAction(
     return { ...initialState, error: "Unauthorized." };
   }
 
-  const visitorId = Number(formData.get("visitorId"));
+  // ✅ UUID handling
+  const visitorIdRaw = String(formData.get("visitorId") ?? "").trim();
+  const visitorId =
+    visitorIdRaw && visitorIdRaw !== "none" ? visitorIdRaw : null;
+
   const date = String(formData.get("date") ?? "").trim();
   const feedback = String(formData.get("feedback") ?? "").trim();
   const nextFollowUpDate = String(
@@ -45,13 +49,8 @@ export async function addFollowUpAction(
   ).trim();
   const status = String(formData.get("status") ?? "").trim();
 
-  if (
-    !Number.isFinite(visitorId) ||
-    visitorId <= 0 ||
-    !date ||
-    !feedback ||
-    !status
-  ) {
+  // ✅ Updated validation (no Number checks)
+  if (!visitorId || !date || !feedback || !status) {
     return { ...initialState, error: "Please fill all required fields." };
   }
 

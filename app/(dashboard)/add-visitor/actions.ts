@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export type AddVisitorState = {
@@ -61,11 +61,8 @@ export async function addVisitorAction(
     return { ...initialState, error: "Invalid status value." };
   }
 
-  const assignedToId = assignedToIdRaw ? Number(assignedToIdRaw) : null;
-
-  if (assignedToId && !Number.isFinite(assignedToId)) {
-    return { ...initialState, error: "Invalid assigned user." };
-  }
+  const assignedToId =
+    assignedToIdRaw && assignedToIdRaw !== "none" ? assignedToIdRaw : null;
 
   if (assignedToId) {
     const assignedUser = await prisma.user.findUnique({
@@ -81,35 +78,76 @@ export async function addVisitorAction(
     }
   }
 
-  await prisma.visitor.create({
-    data: {
-      name,
-      dateOfVisit: new Date(dateOfVisit),
-      category,
-      mobileNo,
-      emailAddress: emailAddress || null,
-      eoi: eoi as "YES" | "NO" | "MAYBE",
-      invitedBy: invitedBy || null,
-      categoryClash,
-      assignedToId,
-      status: status as
-        | "NEW"
-        | "PENDING"
-        | "INTERESTED"
-        | "MAYBE_LATER"
-        | "JOINED"
-        | "REJECTED"
-        | "CATEGORY_CLASH"
-        | "CLOSED",
-    },
+  // ✅ Email fallback
+  const emailToUse = emailAddress || `${mobileNo}@temp.local`;
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: emailToUse },
   });
 
-  revalidatePath("/overview");
-  revalidatePath("/visitors");
+  if (existingUser) {
+    return {
+      ...initialState,
+      error: "User already exists with this email/mobile.",
+    };
+  }
 
-  return {
-    success: true,
-    message: "Visitor added successfully.",
-    error: null,
-  };
+  const passwordHash = await hashPassword("12345678");
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1️⃣ Create user (UUID id assumed)
+      const createdUser = await tx.user.create({
+        data: {
+          name,
+          email: emailToUse,
+          passwordHash,
+          role: "VISITOR",
+        },
+        select: { id: true }, // now string
+      });
+
+      // 2️⃣ Create visitor
+      await tx.visitor.create({
+        data: {
+          name,
+          dateOfVisit: new Date(dateOfVisit),
+          category,
+          mobileNo,
+          emailAddress: emailAddress || null,
+          eoi: eoi as "YES" | "NO" | "MAYBE",
+          invitedBy: invitedBy || null,
+          categoryClash,
+          assignedToId,
+          status: status as
+            | "NEW"
+            | "PENDING"
+            | "INTERESTED"
+            | "MAYBE_LATER"
+            | "JOINED"
+            | "REJECTED"
+            | "CATEGORY_CLASH"
+            | "CLOSED",
+          userId: createdUser.id,
+        },
+      });
+    });
+
+    revalidatePath("/overview");
+    revalidatePath("/visitors");
+
+    return {
+      success: true,
+      message: "Visitor and user created successfully.",
+      error: null,
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      message: null,
+      error: "Failed to create visitor.",
+    };
+  }
 }
