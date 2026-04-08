@@ -6,16 +6,17 @@ export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  const { id: idParam } = await context.params;
+  const params = await context.params;
   const user = await getUserFromRequest(request);
 
   if (!user || user.role !== "ADMIN") {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const id = Number(idParam);
+  // ✅ FORCE string type (no number conversion anywhere)
+  const id: string = params.id;
 
-  if (!Number.isFinite(id) || id <= 0) {
+  if (!id || typeof id !== "string") {
     return NextResponse.json(
       { message: "Invalid visitor id." },
       { status: 400 },
@@ -23,7 +24,7 @@ export async function GET(
   }
 
   const visitor = await prisma.visitor.findUnique({
-    where: { id },
+    where: { id }, // ✅ string UUID (FIXED)
     select: {
       id: true,
       name: true,
