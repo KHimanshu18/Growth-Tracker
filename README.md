@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🔗 Live Demo: https://growth-tracker-drab.vercel.app/
 
-## Getting Started
+---
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🔐 Authentication & RBAC
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Login-based system (no public signup)
+- Role-based access:
+  - **Admin**
+  - **Visitor**
+- Secure authentication using JWT (cookies)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 👨‍💼 Admin Features
 
-## Learn More
+- Add new visitors
+- Automatically creates a linked user account (default password: `12345678`)
+- View all visitors
+- Add follow-ups for any visitor
+- Dashboard insights:
+  - Total visitors
+  - Monthly visitors
+  - Follow-ups (pending/overdue)
+  - Status breakdown (Interested, Joined, Rejected, etc.)
+  - Graph visualization
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 👤 Visitor Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Login with assigned credentials
+- View personal dashboard
+- Access personal details
+- Track own follow-ups and status
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 📊 Dashboard
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Line graph showing visitor growth over time
+- Real-time stats fetched from database
+- Status-based segmentation
+
+---
+
+## 🏗️ Tech Stack
+
+- **Frontend**: Next.js (App Router), React, TypeScript
+- **UI**: shadcn/ui, Tailwind CSS
+- **Backend**: Next.js API Routes, Server Actions
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Auth**: JWT (jose), bcrypt
+- **State Management**: Context API
+
+---
