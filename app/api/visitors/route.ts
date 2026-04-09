@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         status: body.status as
           | "NEW"
           | "PENDING"
+          | "OVERDUE"
           | "INTERESTED"
           | "MAYBE_LATER"
           | "JOINED"

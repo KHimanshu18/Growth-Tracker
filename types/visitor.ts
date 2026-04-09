@@ -5,6 +5,7 @@ export type ExpressionOfInterest = "YES" | "NO" | "MAYBE";
 export type VisitorStatus =
   | "NEW"
   | "PENDING"
+  | "OVERDUE"
   | "INTERESTED"
   | "MAYBE_LATER"
   | "JOINED"

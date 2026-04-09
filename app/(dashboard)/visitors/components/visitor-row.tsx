@@ -8,6 +8,7 @@ import type { VisitorListItem } from "@/types";
 const statusLabel: Record<string, string> = {
   NEW: "New",
   PENDING: "Pending",
+  OVERDUE: "Overdue",
   INTERESTED: "Interested",
   MAYBE_LATER: "Maybe Later",
   JOINED: "Joined",

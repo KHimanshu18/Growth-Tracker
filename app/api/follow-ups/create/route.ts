@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
           status: status as
             | "NEW"
             | "PENDING"
+            | "OVERDUE"
             | "INTERESTED"
             | "MAYBE_LATER"
             | "JOINED"
@@ -85,6 +86,7 @@ export async function POST(request: NextRequest) {
           status: status as
             | "NEW"
             | "PENDING"
+            | "OVERDUE"
             | "INTERESTED"
             | "MAYBE_LATER"
             | "JOINED"

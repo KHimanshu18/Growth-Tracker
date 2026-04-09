@@ -24,7 +24,7 @@ export async function GET(
   }
 
   const visitor = await prisma.visitor.findUnique({
-    where: { id }, // ✅ string UUID (FIXED)
+    where: { id },
     select: {
       id: true,
       name: true,
@@ -37,7 +37,6 @@ export async function GET(
       categoryClash: true,
       status: true,
       assignedToId: true,
-      userId: true,
       createdAt: true,
       updatedAt: true,
       assignedTo: {
@@ -45,14 +44,6 @@ export async function GET(
           id: true,
           name: true,
           email: true,
-        },
-      },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
         },
       },
       followUps: {

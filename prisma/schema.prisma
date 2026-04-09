@@ -42,7 +42,6 @@ model User {
 
   assignedVisitors Visitor[]   @relation("AssignedTo")
   createdFollowUps FollowUp[]  @relation("CreatedBy")
-  visitorProfile   Visitor?    @relation("VisitorAccount")
 
   @@index([role])
 }
@@ -61,9 +60,6 @@ model Visitor {
 
   assignedToId     String?
   assignedTo       User?                @relation("AssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
-
-  userId           String?              @unique
-  user             User?                @relation("VisitorAccount", fields: [userId], references: [id], onDelete: SetNull)
 
   followUps        FollowUp[]
 

@@ -32,6 +32,7 @@ const initialState: FollowUpState = {
 const statusOptions = [
   { label: "New", value: "NEW" },
   { label: "Pending", value: "PENDING" },
+  { label: "Overdue", value: "OVERDUE" },
   { label: "Interested", value: "INTERESTED" },
   { label: "Maybe Later", value: "MAYBE_LATER" },
   { label: "Joined", value: "JOINED" },

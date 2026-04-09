@@ -9,6 +9,7 @@ import { useVisitor } from "@/hooks/use-visitor";
 const statusLabel: Record<string, string> = {
   NEW: "New",
   PENDING: "Pending",
+  OVERDUE: "Overdue",
   INTERESTED: "Interested",
   MAYBE_LATER: "Maybe Later",
   JOINED: "Joined",

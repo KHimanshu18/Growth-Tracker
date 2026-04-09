@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUser, hashPassword } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export type AddVisitorState = {
@@ -20,6 +20,7 @@ const allowedEOI = ["YES", "NO", "MAYBE"] as const;
 const allowedStatus = [
   "NEW",
   "PENDING",
+  "OVERDUE",
   "INTERESTED",
   "MAYBE_LATER",
   "JOINED",
@@ -92,21 +93,8 @@ export async function addVisitorAction(
     };
   }
 
-  const passwordHash = await hashPassword("12345678");
-
   try {
     await prisma.$transaction(async (tx) => {
-      // 1️⃣ Create user (UUID id assumed)
-      const createdUser = await tx.user.create({
-        data: {
-          name,
-          email: emailToUse,
-          passwordHash,
-          role: "VISITOR",
-        },
-        select: { id: true }, // now string
-      });
-
       // 2️⃣ Create visitor
       await tx.visitor.create({
         data: {
@@ -122,13 +110,13 @@ export async function addVisitorAction(
           status: status as
             | "NEW"
             | "PENDING"
+            | "OVERDUE"
             | "INTERESTED"
             | "MAYBE_LATER"
             | "JOINED"
             | "REJECTED"
             | "CATEGORY_CLASH"
             | "CLOSED",
-          userId: createdUser.id,
         },
       });
     });

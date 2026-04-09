@@ -19,6 +19,7 @@ const initialState: FollowUpState = {
 const allowedStatus = [
   "NEW",
   "PENDING",
+  "OVERDUE",
   "INTERESTED",
   "MAYBE_LATER",
   "JOINED",
