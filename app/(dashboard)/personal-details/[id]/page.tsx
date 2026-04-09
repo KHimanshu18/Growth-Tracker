@@ -4,9 +4,9 @@ import { VisitorDetails } from "../components/visitor-details";
 export default async function VisitorDetailsByIdPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = params.id; // ✅ UUID string
+  const { id } = await params;
 
   if (!id || typeof id !== "string") {
     notFound();
