@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { DashboardStats } from "@/types";
 import { useAuthContext } from "./auth-context";
 
@@ -23,6 +24,7 @@ const DashboardContext = createContext<DashboardContextValue | undefined>(
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthContext();
+  const pathname = usePathname();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +63,12 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     void refreshDashboard();
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (pathname === "/overview") {
+      void refreshDashboard();
+    }
+  }, [pathname]);
 
   const value = useMemo(
     () => ({

@@ -7,8 +7,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { VisitorListItem, VisitorRecord } from "@/types";
 import { useAuthContext } from "./auth-context";
+import path from "path";
 
 type VisitorContextValue = {
   visitors: VisitorListItem[];
@@ -26,6 +28,7 @@ const VisitorContext = createContext<VisitorContextValue | undefined>(
 
 export function VisitorProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuthContext();
+  const pathname = usePathname();
   const [visitors, setVisitors] = useState<VisitorListItem[]>([]);
   const [currentVisitor, setCurrentVisitor] = useState<VisitorRecord | null>(
     null,
@@ -123,7 +126,7 @@ export function VisitorProvider({ children }: { children: React.ReactNode }) {
       setCurrentVisitor(null);
       setLoading(false);
     }
-  }, [user?.role]);
+  }, [user?.role, pathname]);
 
   const value = useMemo(
     () => ({
